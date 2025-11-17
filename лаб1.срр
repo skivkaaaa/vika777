@@ -1,1 +1,86 @@
+Типовые задачи на C++
 
+Задача 1: Разделение строки на четные и нечетные позиции
+
+cpp
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int main() {
+    // Сохраним строку в переменной
+    string str = "AaBbCcDd";
+    
+    // Создаем строки для результатов
+    string even_positions = "";  // Четные позиции
+    string odd_positions = "";   // Нечетные позиции
+    
+    // Разделяем символы по позициям
+    for (int i = 0; i < str.length(); i++) {
+        if (i % 2 == 0) {
+            // Четные индексы (0, 2, 4, ...)
+            even_positions += str[i];
+        } else {
+            // Нечетные индексы (1, 3, 5, ...)
+            odd_positions += str[i];
+        }
+    }
+    
+    // Выводим результаты
+    cout << "Символы на четных позициях: " << even_positions << endl;
+    cout << "Символы на нечетных позициях: " << odd_positions << endl;
+    
+    return 0;
+}
+
+
+Задача 2: Разделение вектора на буквы и цифры
+
+cpp
+#include <iostream>
+#include <vector>
+#include <cctype>  // для функций isalpha() и isdigit()
+
+using namespace std;
+
+int main() {
+    // Исходный вектор
+    vector<char> original = {'a', '1', 'b', '2', 'c', '3'};
+    
+    // Векторы для результатов
+    vector<char> letters;  // для букв
+    vector<char> digits;   // для цифр
+    
+    // Разделяем элементы
+    for (char element : original) {
+        if (isalpha(element)) {
+            // Если элемент - буква
+            letters.push_back(element);
+        } else if (isdigit(element)) {
+            // Если элемент - цифра
+            digits.push_back(element);
+        }
+    }
+    
+    // Очищаем исходный вектор
+    original.clear();
+    
+    // Выводим результаты
+    cout << "Буквы: ";
+    for (char letter : letters) {
+        cout << letter << " ";
+    }
+    cout << endl << endl;
+    
+    cout << "Цифры: ";
+    for (char digit : digits) {
+        cout << digit << " ";
+    }
+    cout << endl;
+    
+    // Демонстрация, что исходный вектор пуст
+    cout << "Размер исходного вектора после очистки: " << original.size() << endl;
+    
+    return 0;
+}
