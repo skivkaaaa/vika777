@@ -1,0 +1,80 @@
+C++ реализации
+Двусвязный список - система навигации
+
+cpp
+#include <iostream>
+#include <string>
+
+template<typename T>
+class NavigationHistory {
+private:
+    struct Node {
+        T data;
+        Node* prev;
+        Node* next;
+        Node(T value) : data(value), prev(nullptr), next(nullptr) {}
+    };
+    
+    Node* head;
+    Node* tail;
+    Node* current;
+
+public:
+    NavigationHistory() : head(nullptr), tail(nullptr), current(nullptr) {}
+    
+    void addPage(T page) {
+        Node* newNode = new Node(page);
+        if (!head) {
+            head = tail = current = newNode;
+        } else {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+            current = newNode;
+        }
+        std::cout << "Добавлена страница: " << page << std::endl;
+    }
+    
+    void goBack() {
+        if (current && current->prev) {
+            current = current->prev;
+            std::cout << "Назад: " << current->data << std::endl;
+        } else {
+            std::cout << "Нельзя вернуться назад" << std::endl;
+        }
+    }
+    
+    void goForward() {
+        if (current && current->next) {
+            current = current->next;
+            std::cout << "Вперед: " << current->data << std::endl;
+        } else {
+            std::cout << "Нельзя перейти вперед" << std::endl;
+        }
+    }
+    
+    void displayHistory() {
+        std::cout << "История навигации: ";
+        Node* temp = head;
+        while (temp) {
+            std::cout << temp->data << " ";
+            temp = temp->next;
+        }
+        std::cout << std::endl;
+    }
+};
+
+// Использование
+int main() {
+    NavigationHistory<std::string> history;
+    history.addPage("Главная");
+    history.addPage("Продукты");
+    history.addPage("Корзина");
+    
+    history.displayHistory();
+    history.goBack();
+    history.goBack();
+    history.goForward();
+    
+    return 0;
+}
