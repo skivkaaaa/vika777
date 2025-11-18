@@ -1,0 +1,76 @@
+Реализация графа на C++
+cpp
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <unordered_map>
+#include <limits>
+#include <string>
+
+class Graph {
+private:
+    struct Edge {
+        std::string destination;
+        int weight;
+    };
+    
+    std::unordered_map<std::string, std::vector<Edge>> adjacencyList;
+    
+public:
+    void addEdge(const std::string& source, const std::string& destination, int weight) {
+        adjacencyList[source].push_back({destination, weight});
+        adjacencyList[destination].push_back({source, weight});
+    }
+    
+    std::unordered_map<std::string, int> dijkstra(const std::string& start) {
+        std::unordered_map<std::string, int> distances;
+        using Pair = std::pair<int, std::string>;
+        std::priority_queue<Pair, std::vector<Pair>, std::greater<Pair>> priorityQueue;
+        
+        for (const auto& pair : adjacencyList) {
+            distances[pair.first] = std::numeric_limits<int>::max();
+        }
+        distances[start] = 0;
+        priorityQueue.push({0, start});
+        
+        while (!priorityQueue.empty()) {
+            auto [currentDistance, currentNode] = priorityQueue.top();
+            priorityQueue.pop();
+            
+            if (currentDistance > distances[currentNode]) {
+                continue;
+            }
+            
+            for (const auto& edge : adjacencyList[currentNode]) {
+                int newDistance = currentDistance + edge.weight;
+                
+                if (newDistance < distances[edge.destination]) {
+                    distances[edge.destination] = newDistance;
+                    priorityQueue.push({newDistance, edge.destination});
+                }
+            }
+        }
+        
+        return distances;
+    }
+};
+
+int main() {
+    Graph graph;
+    graph.addEdge("A", "B", 4);
+    graph.addEdge("A", "C", 2);
+    graph.addEdge("B", "C", 1);
+    graph.addEdge("B", "D", 5);
+    graph.addEdge("C", "D", 8);
+    graph.addEdge("C", "E", 10);
+    graph.addEdge("D", "E", 2);
+    
+    auto distances = graph.dijkstra("A");
+    
+    std::cout << "Кратчайшие расстояния от вершины A:" << std::endl;
+    for (const auto& pair : distances) {
+        std::cout << "До " << pair.first << ": " << pair.second << std::endl;
+    }
+    
+    return 0;
+}
