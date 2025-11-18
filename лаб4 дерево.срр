@@ -1,0 +1,84 @@
+Реализация бинарного дерева на C++
+cpp
+#include <iostream>
+#include <vector>
+#include <memory>
+
+class BinaryTree {
+private:
+    struct Node {
+        int key;
+        std::unique_ptr<Node> left;
+        std::unique_ptr<Node> right;
+        
+        Node(int k) : key(k), left(nullptr), right(nullptr) {}
+    };
+    
+    std::unique_ptr<Node> root;
+    
+    void insertRecursive(std::unique_ptr<Node>& node, int key) {
+        if (!node) {
+            node = std::make_unique<Node>(key);
+            return;
+        }
+        
+        if (key < node->key) {
+            insertRecursive(node->left, key);
+        } else if (key > node->key) {
+            insertRecursive(node->right, key);
+        }
+    }
+    
+    bool searchRecursive(const std::unique_ptr<Node>& node, int key) const {
+        if (!node) return false;
+        if (node->key == key) return true;
+        
+        return key < node->key ? searchRecursive(node->left, key) 
+                              : searchRecursive(node->right, key);
+    }
+    
+    void inorderRecursive(const std::unique_ptr<Node>& node, std::vector<int>& result) const {
+        if (node) {
+            inorderRecursive(node->left, result);
+            result.push_back(node->key);
+            inorderRecursive(node->right, result);
+        }
+    }
+    
+public:
+    BinaryTree() : root(nullptr) {}
+    
+    void insert(int key) {
+        insertRecursive(root, key);
+    }
+    
+    bool search(int key) const {
+        return searchRecursive(root, key);
+    }
+    
+    std::vector<int> inorderTraversal() const {
+        std::vector<int> result;
+        inorderRecursive(root, result);
+        return result;
+    }
+};
+
+int main() {
+    BinaryTree tree;
+    std::vector<int> elements = {50, 30, 70, 20, 40, 60, 80};
+    
+    for (int elem : elements) {
+        tree.insert(elem);
+    }
+    
+    std::vector<int> traversal = tree.inorderTraversal();
+    std::cout << "Обход дерева: ";
+    for (int val : traversal) {
+        std::cout << val << " ";
+    }
+    std::cout << std::endl;
+    
+    std::cout << "Поиск элемента 40: " << (tree.search(40) ? "Найден" : "Не найден") << std::endl;
+    
+    return 0;
+}
