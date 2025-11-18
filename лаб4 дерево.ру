@@ -1,8 +1,9 @@
-Бинарные деревья в Python
+Реализация бинарного дерева на Python
+
 python
-class TreeNode:
-    def __init__(self, value):
-        self.value = value
+class Node:
+    def __init__(self, key):
+        self.key = key
         self.left = None
         self.right = None
 
@@ -10,39 +11,50 @@ class BinaryTree:
     def __init__(self):
         self.root = None
     
-    def insert(self, value):
-        if not self.root:
-            self.root = TreeNode(value)
+    def insert(self, key):
+        if self.root is None:
+            self.root = Node(key)
         else:
-            self._insert_recursive(self.root, value)
+            self._insert_recursive(self.root, key)
     
-    def _insert_recursive(self, node, value):
-        if value < node.value:
+    def _insert_recursive(self, node, key):
+        if key < node.key:
             if node.left is None:
-                node.left = TreeNode(value)
+                node.left = Node(key)
             else:
-                self._insert_recursive(node.left, value)
-        else:
+                self._insert_recursive(node.left, key)
+        elif key > node.key:
             if node.right is None:
-                node.right = TreeNode(value)
+                node.right = Node(key)
             else:
-                self._insert_recursive(node.right, value)
+                self._insert_recursive(node.right, key)
     
-    def search(self, value):
-        return self._search_recursive(self.root, value)
+    def search(self, key):
+        return self._search_recursive(self.root, key)
     
-    def _search_recursive(self, node, value):
-        if node is None or node.value == value:
+    def _search_recursive(self, node, key):
+        if node is None or node.key == key:
             return node
-        if value < node.value:
-            return self._search_recursive(node.left, value)
-        return self._search_recursive(node.right, value)
+        if key < node.key:
+            return self._search_recursive(node.left, key)
+        return self._search_recursive(node.right, key)
+    
+    def inorder_traversal(self):
+        result = []
+        self._inorder_recursive(self.root, result)
+        return result
+    
+    def _inorder_recursive(self, node, result):
+        if node:
+            self._inorder_recursive(node.left, result)
+            result.append(node.key)
+            self._inorder_recursive(node.right, result)
 
 # Пример использования
 tree = BinaryTree()
-tree.insert(50)
-tree.insert(30)
-tree.insert(70)
-tree.insert(20)
-tree.insert(40)
-print("Поиск 40:", tree.search(40) is not None)
+elements = [50, 30, 70, 20, 40, 60, 80]
+for elem in elements:
+    tree.insert(elem)
+
+print("Обход дерева в порядке возрастания:", tree.inorder_traversal())
+print("Поиск элемента 40:", "Найден" if tree.search(40) else "Не найден")
